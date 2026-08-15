@@ -76,21 +76,7 @@ export default function TransitPredictionsPage() {
     window.location.hash = encode(newStop)
   };
 
-  function maybeRenderCallButton(stopId) {
-    if (Number.isNaN(Number.parseInt(stopId))) {
-      return <></>
-    }
-    return (
-      <div className="flex justify-center">
-        <a
-          href={`tel:511p1p1,,${(stopId)}`}
-          className="inline-block px-2 py-1 ml-2 text-white text-sm lg:text-lg bg-blue-600 border border-blue-600 rounded hover:bg-blue-700"
-        >
-          CLICK TO CALL
-        </a>
-      </div>
-    );
-  }
+
 
   //set default marker icon
   delete L.Icon.Default.prototype._getIconUrl;
@@ -155,7 +141,6 @@ export default function TransitPredictionsPage() {
                 <span className="text-2xl">No predictions available at this time</span>
               ) : (
                 <div>
-                  {maybeRenderCallButton(stop.id)}
                   {stop.predictions
                     .sort((a, b) => a.route.localeCompare(b.route))
                     .map((prediction, predictionIndex) => (
@@ -173,16 +158,13 @@ export default function TransitPredictionsPage() {
           ))}
           {!!busData.length && busData.map((stop) => (
             stop.name === selectedStop &&
-            <div key={stop.name} className="overflow-visible xl:mr-10 mt-4 items-center">
-              <MapContainer center={[stop.latitude, stop.longitude]} zoom={16} className="mx-auto rounded-lg h-[30vh] xl:h-[29em] w-full">
-                <TileLayer
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  attribution="&copy; OpenStreetMap contributors"
-                />
-                <Marker position={[stop.latitude, stop.longitude]}>
-                  <Popup>{stop.name}</Popup>
-                </Marker>
-              </MapContainer>
+              <div key={stop.name} className="mt-4 h-[35vh] items-center overflow-visible xl:mt-2 xl:h-[38rem]">
+              <iframe
+                title="Stop map"
+                sandbox="allow-scripts"
+                className="mx-auto h-full w-full rounded-lg border-0"
+                src={`https://www.openstreetmap.org/export/embed.html?bbox=${stop.longitude - 0.003}%2C${stop.latitude - 0.003}%2C${stop.longitude + 0.003}%2C${stop.latitude + 0.003}&layer=transportmap&marker=${stop.latitude}%2C${stop.longitude}`}
+              />
             </div>
           ))}
 
